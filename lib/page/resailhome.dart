@@ -10,9 +10,98 @@ class ResailHome extends StatefulWidget {
 }
 
 class _ResailHomeState extends State<ResailHome> {
+  List<Map<String, String>> datas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    datas = [
+      {
+        "cid": "1",
+        "image": "assets/images/ara-1.jpg",
+        "title": "네메시스 축구화275",
+        "location": "제주 제주시 아라동",
+        "price": "30000",
+        "likes": "2"
+      },
+      {
+        "cid": "2",
+        "image": "assets/images/ara-2.jpg",
+        "title": "LA갈비 5kg팔아요~",
+        "location": "제주 제주시 아라동",
+        "price": "100000",
+        "likes": "5"
+      },
+      {
+        "cid": "3",
+        "image": "assets/images/ara-3.jpg",
+        "title": "치약팝니다",
+        "location": "제주 제주시 아라동",
+        "price": "5000",
+        "likes": "0"
+      },
+      {
+        "cid": "4",
+        "image": "assets/images/ara-4.jpg",
+        "title": "[풀박스]맥북프로16인치 터치바 스페이스그레이",
+        "location": "제주 제주시 아라동",
+        "price": "2500000",
+        "likes": "6"
+      },
+      {
+        "cid": "5",
+        "image": "assets/images/ara-5.jpg",
+        "title": "디월트존기임팩",
+        "location": "제주 제주시 아라동",
+        "price": "150000",
+        "likes": "2"
+      },
+      {
+        "cid": "6",
+        "image": "assets/images/ara-6.jpg",
+        "title": "갤럭시s10",
+        "location": "제주 제주시 아라동",
+        "price": "180000",
+        "likes": "2"
+      },
+      {
+        "cid": "7",
+        "image": "assets/images/ara-7.jpg",
+        "title": "선반",
+        "location": "제주 제주시 아라동",
+        "price": "15000",
+        "likes": "2"
+      },
+      {
+        "cid": "8",
+        "image": "assets/images/ara-8.jpg",
+        "title": "냉장 쇼케이스",
+        "location": "제주 제주시 아라동",
+        "price": "80000",
+        "likes": "3"
+      },
+      {
+        "cid": "9",
+        "image": "assets/images/ara-9.jpg",
+        "title": "대우 미니냉장고",
+        "location": "제주 제주시 아라동",
+        "price": "30000",
+        "likes": "3"
+      },
+      {
+        "cid": "10",
+        "image": "assets/images/ara-10.jpg",
+        "title": "멜킨스 풀업 턱걸이 판매합니다.",
+        "location": "제주 제주시 아라동",
+        "price": "50000",
+        "likes": "7"
+      }
+    ];
+  }
+
   //메서드는 하나에서 한가지의 역할만 수행해야 성능에 좋음.
   // appBar 프로퍼티에는 Widget이 아닌 PreferredSizeWidget가 와야함.
-  PreferredSizeWidget _appbarwidget() {
+  PreferredSizeWidget _appbarWidget() {
     return AppBar(
       // AppBar를 생성하여 앱의 상단 바를 표시합니다.
       title: GestureDetector(
@@ -52,16 +141,40 @@ class _ResailHomeState extends State<ResailHome> {
     );
   }
 
+  Widget _bodyWidget() {
+    return ListView.separated(
+        itemCount: 10,
+        itemBuilder: (BuildContext context, int Index) {
+          return Container(
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(60)), // 모서리를 10.0 픽셀만큼 둥글게 잘라냅니다.
+                  child: Image.asset(datas[Index]["image"]!),
+                ),
+              ],
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int Index) {
+          return Container(height: 1, color: Colors.black12.withOpacity(0.5));
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // Scaffold 위젯을 사용하여 기본 앱 레이아웃을 생성합니다.
-      appBar: _appbarwidget(),
-      body: Container(),
-      bottomNavigationBar: Container(),
+      appBar: _appbarWidget(),
+      body: _bodyWidget(),
+      // bottomNavigationBar: Container(
+      //   height: 10,
+      //   color: Colors.orange,
+      // ),
     );
   }
 }
 
 
-//여기 위젯에만 스타일과 배경색을 정해주게 되면, 매 페이지의 appBar를 수정해줘야 한다.
+//여기 위젯에만 스타일과 배경색을 정해주게 되면, 매 페이지의 appBar를 수정해줘야 한다.  
