@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'; // Flutter에서 제공하는 Material 디자인 관련 위젯을 사용하기 위해 필요한 패키지입니다.
 import 'package:flutter_svg/flutter_svg.dart'; // SVG 이미지를 사용하기 위해 필요한 패키지입니다.
+import 'package:intl/intl.dart'; // 숫자를 통화 형식으로 변환하기 위해 필요한 패키지입니다.
 
 class ResailHome extends StatefulWidget {
   ResailHome({Key? key}) : super(key: key); // ResailHome 위젯의 생성자입니다.
@@ -141,18 +142,82 @@ class _ResailHomeState extends State<ResailHome> {
     );
   }
 
+  final oCcy = new NumberFormat("#,###", "ko_KR");
+  String calcStringToWon(String priceString) {
+    return "${oCcy.format(int.parse(priceString))}원";
+  }
+
   Widget _bodyWidget() {
     return ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemCount: 10,
         itemBuilder: (BuildContext context, int Index) {
           return Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
             child: Row(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.all(
-                      Radius.circular(60)), // 모서리를 10.0 픽셀만큼 둥글게 잘라냅니다.
-                  child: Image.asset(datas[Index]["image"]!),
+                      Radius.circular(10)), // 모서리를 10.0 픽셀만큼 둥글게 잘라냅니다.
+                  child: Image.asset(datas[Index]["image"].toString(),
+                      width: 100, height: 100),
                 ),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: Container(
+                    //이 컨테이너를 Expanded로 다시 한번 감싸주게 되면,
+                    //위쪽에 있는 ClipRRect 위젯이 차지하지 못하는 나머지 공간을 여기서 모두 활용하게 됩니다.
+                    height: 100,
+
+                    child: Column(
+
+                        //Expanded 위젯에 범위를 부모에서 지정해주면, 나머지 공간을 차지하게 된다.
+                        //Column은 범위가 없기 때문에, 더 상단인 Container에서 지정해줘야한다.
+                        //mainAxisAligment는 Column의 세로 정렬을 맞추기 위해 사용한다.
+                        //Column들의 가로 정렬을 맞추기 위해 crossAxisAlignment를 사용한다.
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            datas[Index]["title"].toString(),
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                            overflow:
+                                TextOverflow.ellipsis, //글자가 너무 길면 ..으로 생략되게 한다.
+                          ),
+                          SizedBox(height: 4), //간격조정
+                          Text(
+                            datas[Index]["location"].toString(),
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black26.withOpacity(0.4)),
+                          ),
+                          SizedBox(height: 4), //간격조정
+                          Text(
+                            calcStringToWon(datas[Index]["price"].toString()),
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w500),
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/svg/heart_off.svg",
+                                  width: 14,
+                                  height: 14,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(datas[Index]["likes"].toString()),
+                              ],
+                            ),
+                          ),
+                        ]),
+                  ),
+                )
               ],
             ),
           );
@@ -176,5 +241,4 @@ class _ResailHomeState extends State<ResailHome> {
   }
 }
 
-
-//여기 위젯에만 스타일과 배경색을 정해주게 되면, 매 페이지의 appBar를 수정해줘야 한다.  
+//여기 위젯에만 스타일과 배경색을 정해주게 되면, 매 페이지의 appBar를 수정해줘야 한다.
