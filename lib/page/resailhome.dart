@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart'; // Flutter에서 제공하는 Material 디자인 관련 위젯을 사용하기 위해 필요한 패키지입니다.
-import 'package:flutter_svg/flutter_svg.dart'; // SVG 이미지를 사용하기 위해 필요한 패키지입니다.
-import 'package:intl/intl.dart'; // 숫자를 통화 형식으로 변환하기 위해 필요한 패키지입니다.
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class ResailHome extends StatefulWidget {
-  ResailHome({Key? key}) : super(key: key); // ResailHome 위젯의 생성자입니다.
+  ResailHome({Key? key}) : super(key: key);
 
   @override
-  _ResailHomeState createState() =>
-      _ResailHomeState(); // _ResailHomeState 상태 클래스의 인스턴스를 생성하여 반환합니다.
+  _ResailHomeState createState() => _ResailHomeState();
 }
 
 class _ResailHomeState extends State<ResailHome> {
@@ -100,6 +99,13 @@ class _ResailHomeState extends State<ResailHome> {
     ];
   }
 
+  final oCcy = new NumberFormat("#,###", "ko_KR");
+  String calcStringToWon(String priceString) {
+    return "${oCcy.format(int.parse(priceString))}원";
+  }
+
+  //앱바부분
+
   //메서드는 하나에서 한가지의 역할만 수행해야 성능에 좋음.
   // appBar 프로퍼티에는 Widget이 아닌 PreferredSizeWidget가 와야함.
   PreferredSizeWidget _appbarWidget() {
@@ -111,12 +117,45 @@ class _ResailHomeState extends State<ResailHome> {
           // 탭 이벤트 핸들러입니다.
           print("click"); // 탭시 "click"을 출력합니다.
         },
-        child: Row(
-          // Row를 사용하여 자식 위젯을 가로로 배열합니다.
-          children: [
-            Text('합정동'), // '합정동' 텍스트를 표시하는 Text 위젯입니다.
-            Icon(Icons.arrow_drop_down), // 아래 화살표 아이콘을 표시하는 Icon 위젯입니다.
-          ],
+        child: PopupMenuButton<String>(
+          shape: ShapeBorder.lerp(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              1),
+          onSelected: (String where) {
+            print(where);
+          },
+          itemBuilder: (BuildContext context) {
+            return [
+              PopupMenuItem(
+                child: Text("신사동"), // 메뉴1을 표시하는 PopupMenuItem 위젯입니다.
+                value: "신사동", // 메뉴1의 값을 설정합니다.
+              ),
+              PopupMenuItem(
+                child: Text("철산동"), // 메뉴2를 표시하는 PopupMenuItem 위젯입니다.
+                value: "철산동", // 메뉴2의 값을 설정합니다.
+              ),
+              PopupMenuItem(
+                child: Text("봉천동"), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
+                value: "봉천동", // 메뉴3의 값을 설정합니다.
+              ),
+              PopupMenuItem(
+                child: Text("합정동"), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
+                value: "합정동", // 메뉴3의 값을 설정합니다.
+              ),
+              PopupMenuItem(
+                child: Text("우면동"), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
+                value: "우면동", // 메뉴3의 값을 설정합니다.
+              ),
+            ];
+          },
+          child: Row(
+            // Row를 사용하여 자식 위젯을 가로로 배열합니다.
+            children: [
+              Text('합정동'), // '합정동' 텍스트를 표시하는 Text 위젯입니다.
+              Icon(Icons.arrow_drop_down), // 아래 화살표 아이콘을 표시하는 Icon 위젯입니다.
+            ],
+          ),
         ),
       ),
       actions: [
@@ -142,103 +181,94 @@ class _ResailHomeState extends State<ResailHome> {
     );
   }
 
-  final oCcy = new NumberFormat("#,###", "ko_KR");
-  String calcStringToWon(String priceString) {
-    return "${oCcy.format(int.parse(priceString))}원";
-  }
+  //바디부분
 
   Widget _bodyWidget() {
     return ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        itemCount: 10,
-        itemBuilder: (BuildContext context, int Index) {
-          return Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(10)), // 모서리를 10.0 픽셀만큼 둥글게 잘라냅니다.
-                  child: Image.asset(datas[Index]["image"].toString(),
-                      width: 100, height: 100),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: Container(
-                    //이 컨테이너를 Expanded로 다시 한번 감싸주게 되면,
-                    //위쪽에 있는 ClipRRect 위젯이 차지하지 못하는 나머지 공간을 여기서 모두 활용하게 됩니다.
-                    height: 100,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      itemCount: 10,
+      itemBuilder: (BuildContext context, int Index) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.all(
+                    Radius.circular(10)), // 모서리를 10.0 픽셀만큼 둥글게 잘라냅니다.
+                child: Image.asset(datas[Index]["image"].toString(),
+                    width: 100, height: 100),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                child: Container(
+                  //이 컨테이너를 Expanded로 다시 한번 감싸주게 되면,
+                  //위쪽에 있는 ClipRRect 위젯이 차지하지 못하는 나머지 공간을 여기서 모두 활용하게 됩니다.
+                  height: 100,
 
-                    child: Column(
+                  child: Column(
 
-                        //Expanded 위젯에 범위를 부모에서 지정해주면, 나머지 공간을 차지하게 된다.
-                        //Column은 범위가 없기 때문에, 더 상단인 Container에서 지정해줘야한다.
-                        //mainAxisAligment는 Column의 세로 정렬을 맞추기 위해 사용한다.
-                        //Column들의 가로 정렬을 맞추기 위해 crossAxisAlignment를 사용한다.
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            datas[Index]["title"].toString(),
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                            overflow:
-                                TextOverflow.ellipsis, //글자가 너무 길면 ..으로 생략되게 한다.
+                      //Expanded 위젯에 범위를 부모에서 지정해주면, 나머지 공간을 차지하게 된다.
+                      //Column은 범위가 없기 때문에, 더 상단인 Container에서 지정해줘야한다.
+                      //mainAxisAligment는 Column의 세로 정렬을 맞추기 위해 사용한다.
+                      //Column들의 가로 정렬을 맞추기 위해 crossAxisAlignment를 사용한다.
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          datas[Index]["title"].toString(),
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                          overflow:
+                              TextOverflow.ellipsis, //글자가 너무 길면 ..으로 생략되게 한다.
+                        ),
+                        SizedBox(height: 4), //간격조정
+                        Text(
+                          datas[Index]["location"].toString(),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black26.withOpacity(0.4)),
+                        ),
+                        SizedBox(height: 4), //간격조정
+                        Text(
+                          calcStringToWon(datas[Index]["price"].toString()),
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w500),
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/svg/heart_off.svg",
+                                width: 14,
+                                height: 14,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(datas[Index]["likes"].toString()),
+                            ],
                           ),
-                          SizedBox(height: 4), //간격조정
-                          Text(
-                            datas[Index]["location"].toString(),
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black26.withOpacity(0.4)),
-                          ),
-                          SizedBox(height: 4), //간격조정
-                          Text(
-                            calcStringToWon(datas[Index]["price"].toString()),
-                            style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w500),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/svg/heart_off.svg",
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(datas[Index]["likes"].toString()),
-                              ],
-                            ),
-                          ),
-                        ]),
-                  ),
-                )
-              ],
-            ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int Index) {
-          return Container(height: 1, color: Colors.black12.withOpacity(0.5));
-        });
+                        ),
+                      ]),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int Index) {
+        return Container(height: 1, color: Colors.black12.withOpacity(0.5));
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Scaffold 위젯을 사용하여 기본 앱 레이아웃을 생성합니다.
       appBar: _appbarWidget(),
       body: _bodyWidget(),
-      // bottomNavigationBar: Container(
-      //   height: 10,
-      //   color: Colors.orange,
-      // ),
     );
   }
 }
-
-//여기 위젯에만 스타일과 배경색을 정해주게 되면, 매 페이지의 appBar를 수정해줘야 한다.

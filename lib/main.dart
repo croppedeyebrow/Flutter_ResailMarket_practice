@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_resailmarketpractice/page/app.dart';
 import 'package:flutter_resailmarketpractice/page/resailhome.dart';
 
 void main() {
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
       ),
-      home: ResailHome(), // 쉼표(,)로 수정
+      home: App(), // 쉼표(,)로 수정
     );
   }
 }
