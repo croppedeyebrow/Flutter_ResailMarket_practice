@@ -11,10 +11,22 @@ class ResailHome extends StatefulWidget {
 
 class _ResailHomeState extends State<ResailHome> {
   List<Map<String, String>> datas = [];
+  late String currentLocation;
+  //PopupMenuItem의 value값을
+
+  final Map<String, String> locationTypeToString = {
+    //value값 : key값
+    "신사동": "신사동",
+    "철산동": "철산동",
+    "봉천동": "봉천동",
+    "합정동": "합정동",
+    "우면동": "우면동",
+  };
 
   @override
   void initState() {
     super.initState();
+    currentLocation = "합정동";
     datas = [
       {
         "cid": "1",
@@ -117,34 +129,48 @@ class _ResailHomeState extends State<ResailHome> {
           // 탭 이벤트 핸들러입니다.
           print("click"); // 탭시 "click"을 출력합니다.
         },
+        // PopupMenuButton 위젯을 생성합니다. 이 위젯은 클릭하면 팝업 메뉴를 표시합니다.
         child: PopupMenuButton<String>(
+          offset: Offset(-15, 30),
+
+          // 팝업 메뉴의 모양을 설정합니다. 여기서는 모서리가 둥근 사각형을 사용합니다.
           shape: ShapeBorder.lerp(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               1),
+          // 사용자가 메뉴 항목을 선택하면 호출되는 콜백 함수를 설정합니다.
+          // 선택된 항목의 값을 콘솔에 출력합니다.
           onSelected: (String where) {
-            print(where);
+            setState(() {
+              currentLocation = where;
+            });
           },
+          // 각 메뉴 항목을 생성하는 빌더 함수를 설정합니다.
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem(
-                child: Text("신사동"), // 메뉴1을 표시하는 PopupMenuItem 위젯입니다.
+                child: Center(
+                    child: Text("신사동")), // 메뉴1을 표시하는 PopupMenuItem 위젯입니다.
                 value: "신사동", // 메뉴1의 값을 설정합니다.
               ),
               PopupMenuItem(
-                child: Text("철산동"), // 메뉴2를 표시하는 PopupMenuItem 위젯입니다.
+                child: Center(
+                    child: Text("철산동")), // 메뉴2를 표시하는 PopupMenuItem 위젯입니다.
                 value: "철산동", // 메뉴2의 값을 설정합니다.
               ),
               PopupMenuItem(
-                child: Text("봉천동"), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
+                child: Center(
+                    child: Text("봉천동")), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
                 value: "봉천동", // 메뉴3의 값을 설정합니다.
               ),
               PopupMenuItem(
-                child: Text("합정동"), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
+                child: Center(
+                    child: Text("합정동")), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
                 value: "합정동", // 메뉴3의 값을 설정합니다.
               ),
               PopupMenuItem(
-                child: Text("우면동"), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
+                child: Center(
+                    child: Text("우면동")), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
                 value: "우면동", // 메뉴3의 값을 설정합니다.
               ),
             ];
@@ -152,7 +178,11 @@ class _ResailHomeState extends State<ResailHome> {
           child: Row(
             // Row를 사용하여 자식 위젯을 가로로 배열합니다.
             children: [
-              Text('합정동'), // '합정동' 텍스트를 표시하는 Text 위젯입니다.
+              //if문 없이 value값을 key값으로 받아서 변환하기.
+
+              Text(locationTypeToString[currentLocation] ??
+                  ""), // '합정동' 텍스트를 표시하는 Text 위젯입니다.
+              // '??' 연산자는 'currentLocation' 키에 해당하는 값이 null인 경우, 빈 문자열("")을 반환합니다.
               Icon(Icons.arrow_drop_down), // 아래 화살표 아이콘을 표시하는 Icon 위젯입니다.
             ],
           ),
