@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_resailmarketpractice/repository/contents_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
+// ResailHome 클래스는 StatefulWidget을 상속받는 위젯 클래스입니다.
+// 이 위젯은 중고거래 앱의 홈 화면을 나타냅니다.
 class ResailHome extends StatefulWidget {
   ResailHome({Key? key}) : super(key: key);
 
@@ -9,13 +12,15 @@ class ResailHome extends StatefulWidget {
   _ResailHomeState createState() => _ResailHomeState();
 }
 
+// _ResailHomeState 클래스는 ResailHome 위젯의 상태를 관리하는 State 클래스입니다.
 class _ResailHomeState extends State<ResailHome> {
-  List<Map<String, String>> datas = [];
-  late String currentLocation;
-  //PopupMenuItem의 value값을
+  late String
+      currentLocation; // 현재 선택된 지역을 저장하는 변수입니다. 'late' 키워드를 사용하여 초기화를 지연시킵니다.
+  ContentsRepository contentsRepository =
+      ContentsRepository(); // ContentsRepository 인스턴스를 생성합니다.
 
+  // 지역 타입과 해당 지역 이름을 매핑하는 Map입니다.
   final Map<String, String> locationTypeToString = {
-    //value값 : key값
     "신사동": "신사동",
     "철산동": "철산동",
     "봉천동": "봉천동",
@@ -26,270 +31,228 @@ class _ResailHomeState extends State<ResailHome> {
   @override
   void initState() {
     super.initState();
-    currentLocation = "합정동";
-    datas = [
-      {
-        "cid": "1",
-        "image": "assets/images/ara-1.jpg",
-        "title": "네메시스 축구화275",
-        "location": "제주 제주시 아라동",
-        "price": "30000",
-        "likes": "2"
-      },
-      {
-        "cid": "2",
-        "image": "assets/images/ara-2.jpg",
-        "title": "LA갈비 5kg팔아요~",
-        "location": "제주 제주시 아라동",
-        "price": "100000",
-        "likes": "5"
-      },
-      {
-        "cid": "3",
-        "image": "assets/images/ara-3.jpg",
-        "title": "치약팝니다",
-        "location": "제주 제주시 아라동",
-        "price": "5000",
-        "likes": "0"
-      },
-      {
-        "cid": "4",
-        "image": "assets/images/ara-4.jpg",
-        "title": "[풀박스]맥북프로16인치 터치바 스페이스그레이",
-        "location": "제주 제주시 아라동",
-        "price": "2500000",
-        "likes": "6"
-      },
-      {
-        "cid": "5",
-        "image": "assets/images/ara-5.jpg",
-        "title": "디월트존기임팩",
-        "location": "제주 제주시 아라동",
-        "price": "150000",
-        "likes": "2"
-      },
-      {
-        "cid": "6",
-        "image": "assets/images/ara-6.jpg",
-        "title": "갤럭시s10",
-        "location": "제주 제주시 아라동",
-        "price": "180000",
-        "likes": "2"
-      },
-      {
-        "cid": "7",
-        "image": "assets/images/ara-7.jpg",
-        "title": "선반",
-        "location": "제주 제주시 아라동",
-        "price": "15000",
-        "likes": "2"
-      },
-      {
-        "cid": "8",
-        "image": "assets/images/ara-8.jpg",
-        "title": "냉장 쇼케이스",
-        "location": "제주 제주시 아라동",
-        "price": "80000",
-        "likes": "3"
-      },
-      {
-        "cid": "9",
-        "image": "assets/images/ara-9.jpg",
-        "title": "대우 미니냉장고",
-        "location": "제주 제주시 아라동",
-        "price": "30000",
-        "likes": "3"
-      },
-      {
-        "cid": "10",
-        "image": "assets/images/ara-10.jpg",
-        "title": "멜킨스 풀업 턱걸이 판매합니다.",
-        "location": "제주 제주시 아라동",
-        "price": "50000",
-        "likes": "7"
-      }
-    ];
+    currentLocation = "합정동"; // 초기 선택된 지역을 "합정동"으로 설정합니다. 'late' 변수를 초기화합니다.
   }
 
-  final oCcy = new NumberFormat("#,###", "ko_KR");
+  final oCcy = new NumberFormat("###,###", "ko_KR"); // 숫자 포맷터를 생성합니다.
+
+  // 가격을 원화 형식으로 변환하는 함수입니다.
   String calcStringToWon(String priceString) {
+    if (priceString == "무료나눔") {
+      return priceString;
+    }
     return "${oCcy.format(int.parse(priceString))}원";
   }
 
-  //앱바부분
-
-  //메서드는 하나에서 한가지의 역할만 수행해야 성능에 좋음.
-  // appBar 프로퍼티에는 Widget이 아닌 PreferredSizeWidget가 와야함.
+  // 앱바 위젯을 생성하는 함수입니다.
   PreferredSizeWidget _appbarWidget() {
     return AppBar(
-      // AppBar를 생성하여 앱의 상단 바를 표시합니다.
       title: GestureDetector(
-        // GestureDetector를 사용하여 탭 이벤트를 처리할 수 있는 영역을 생성합니다.
         onTap: () {
-          // 탭 이벤트 핸들러입니다.
-          print("click"); // 탭시 "click"을 출력합니다.
+          print("click");
         },
-        // PopupMenuButton 위젯을 생성합니다. 이 위젯은 클릭하면 팝업 메뉴를 표시합니다.
         child: PopupMenuButton<String>(
           offset: Offset(-15, 30),
-
-          // 팝업 메뉴의 모양을 설정합니다. 여기서는 모서리가 둥근 사각형을 사용합니다.
           shape: ShapeBorder.lerp(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               1),
-          // 사용자가 메뉴 항목을 선택하면 호출되는 콜백 함수를 설정합니다.
-          // 선택된 항목의 값을 콘솔에 출력합니다.
           onSelected: (String where) {
             setState(() {
-              currentLocation = where;
+              currentLocation = where; // 선택된 지역으로 현재 지역을 업데이트합니다.
             });
           },
-          // 각 메뉴 항목을 생성하는 빌더 함수를 설정합니다.
           itemBuilder: (BuildContext context) {
             return [
               PopupMenuItem(
-                child: Center(
-                    child: Text("신사동")), // 메뉴1을 표시하는 PopupMenuItem 위젯입니다.
-                value: "신사동", // 메뉴1의 값을 설정합니다.
+                child: Center(child: Text("신사동")),
+                value: "신사동",
               ),
               PopupMenuItem(
-                child: Center(
-                    child: Text("철산동")), // 메뉴2를 표시하는 PopupMenuItem 위젯입니다.
-                value: "철산동", // 메뉴2의 값을 설정합니다.
+                child: Center(child: Text("철산동")),
+                value: "철산동",
               ),
               PopupMenuItem(
-                child: Center(
-                    child: Text("봉천동")), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
-                value: "봉천동", // 메뉴3의 값을 설정합니다.
+                child: Center(child: Text("봉천동")),
+                value: "봉천동",
               ),
               PopupMenuItem(
-                child: Center(
-                    child: Text("합정동")), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
-                value: "합정동", // 메뉴3의 값을 설정합니다.
+                child: Center(child: Text("합정동")),
+                value: "합정동",
               ),
               PopupMenuItem(
-                child: Center(
-                    child: Text("우면동")), // 메뉴3을 표시하는 PopupMenuItem 위젯입니다.
-                value: "우면동", // 메뉴3의 값을 설정합니다.
+                child: Center(child: Text("우면동")),
+                value: "우면동",
               ),
             ];
           },
           child: Row(
-            // Row를 사용하여 자식 위젯을 가로로 배열합니다.
             children: [
-              //if문 없이 value값을 key값으로 받아서 변환하기.
-
               Text(locationTypeToString[currentLocation] ??
-                  ""), // '합정동' 텍스트를 표시하는 Text 위젯입니다.
-              // '??' 연산자는 'currentLocation' 키에 해당하는 값이 null인 경우, 빈 문자열("")을 반환합니다.
-              Icon(Icons.arrow_drop_down), // 아래 화살표 아이콘을 표시하는 Icon 위젯입니다.
+                  ""), // 선택된 지역 이름을 표시합니다.
+              Icon(Icons.arrow_drop_down), // 드롭다운 아이콘을 표시합니다.
             ],
           ),
         ),
       ),
       actions: [
-        // AppBar 우측에 표시될 위젯들을 설정합니다.
         IconButton(
-          onPressed: () {}, // onPressed 이벤트 핸들러를 설정합니다.
-          icon: Icon(Icons.search), // 검색 아이콘을 표시하는 IconButton 위젯입니다.
+          onPressed: () {},
+          icon: Icon(Icons.search), // 검색 아이콘 버튼입니다.
         ),
         IconButton(
-          onPressed: () {}, // onPressed 이벤트 핸들러를 설정합니다.
-          icon: Icon(Icons.tune), // 설정 아이콘을 표시하는 IconButton 위젯입니다.
+          onPressed: () {},
+          icon: Icon(Icons.tune), // 필터 아이콘 버튼입니다.
         ),
         IconButton(
-          onPressed: () {}, // onPressed 이벤트 핸들러를 설정합니다.
+          onPressed: () {},
           icon: SvgPicture.asset(
-            // SVG 이미지를 표시하는 IconButton 위젯입니다.
-            "assets/svg/bell.svg", // 이미지 파일 경로를 설정합니다.
-            width: 22, // 이미지의 너비를 설정합니다.
-            color: Colors.white, // 이미지의 색상을 설정합니다.
+            "assets/svg/bell.svg", // 알림 아이콘 SVG 이미지입니다.
+            width: 22,
+            color: Colors.white,
           ),
         )
       ],
     );
   }
 
-  //바디부분
+  // 선택된 지역의 컨텐츠를 로드하는 비동기 함수입니다.
+  // Future<List<Map<String, String>>> 타입으로 명시하여 반환 타입을 지정합니다.
+  Future<List<Map<String, String>>> _loadContents() {
+    return contentsRepository.loadContentsFromLocation(currentLocation);
+  }
 
-  Widget _bodyWidget() {
+  // 데이터 리스트를 받아 ListView.separated를 사용하여 리스트를 생성하는 메서드입니다.
+  Widget _makeDataList(List<Map<String, String>> datas) {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int Index) {
+      itemCount: datas.length, // 데이터 리스트의 길이로 itemCount를 설정합니다.
+      itemBuilder: (BuildContext context, int index) {
         return Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.all(
-                    Radius.circular(10)), // 모서리를 10.0 픽셀만큼 둥글게 잘라냅니다.
-                child: Image.asset(datas[Index]["image"].toString(),
-                    width: 100, height: 100),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: Image.asset(
+                  datas[index]["image"] ??
+                      "", // 이미지 경로입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                  width: 100,
+                  height: 100,
+                ),
               ),
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               Expanded(
                 child: Container(
-                  //이 컨테이너를 Expanded로 다시 한번 감싸주게 되면,
-                  //위쪽에 있는 ClipRRect 위젯이 차지하지 못하는 나머지 공간을 여기서 모두 활용하게 됩니다.
                   height: 100,
-
                   child: Column(
-
-                      //Expanded 위젯에 범위를 부모에서 지정해주면, 나머지 공간을 차지하게 된다.
-                      //Column은 범위가 없기 때문에, 더 상단인 Container에서 지정해줘야한다.
-                      //mainAxisAligment는 Column의 세로 정렬을 맞추기 위해 사용한다.
-                      //Column들의 가로 정렬을 맞추기 위해 crossAxisAlignment를 사용한다.
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          datas[Index]["title"].toString(),
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                          overflow:
-                              TextOverflow.ellipsis, //글자가 너무 길면 ..으로 생략되게 한다.
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        datas[index]["title"] ??
+                            "", // 제목입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(height: 4), //간격조정
-                        Text(
-                          datas[Index]["location"].toString(),
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black26.withOpacity(0.4)),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        datas[index]["location"] ??
+                            "", // 위치입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black26.withOpacity(0.4),
                         ),
-                        SizedBox(height: 4), //간격조정
-                        Text(
-                          calcStringToWon(datas[Index]["price"].toString()),
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        calcStringToWon(datas[index]["price"] ??
+                            "0"), // 가격입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
                         ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SvgPicture.asset(
-                                "assets/svg/heart_off.svg",
-                                width: 14,
-                                height: 14,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(datas[Index]["likes"].toString()),
-                            ],
-                          ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SvgPicture.asset(
+                              "assets/svg/heart_off.svg", // 좋아요 아이콘 SVG 이미지입니다.
+                              width: 14,
+                              height: 14,
+                            ),
+                            SizedBox(width: 5),
+                            Text(datas[index]["likes"] ??
+                                "0"), // 좋아요 수입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                          ],
                         ),
-                      ]),
+                      ),
+                    ],
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         );
       },
-      separatorBuilder: (BuildContext context, int Index) {
-        return Container(height: 1, color: Colors.black12.withOpacity(0.5));
+      separatorBuilder: (BuildContext context, int index) {
+        return Container(
+          height: 1,
+          color: Colors.black12.withOpacity(0.5), // 구분선입니다.
+        );
+      },
+    );
+  }
+
+  // 바디 위젯을 생성하는 함수입니다.
+  // Widget _bodyWidget() {
+  //   return FutureBuilder(
+  //     future: _loadContents(), // 비동기로 컨텐츠를 로드합니다.
+  //     builder: (BuildContext context,
+  //         AsyncSnapshot<List<Map<String, String>>?> snapshot) {
+  //       if (snapshot.connectionState != ConnectionState.done) {
+  //         return Center(
+  //             child: CircularProgressIndicator()); // 로딩 중인 경우 로딩 인디케이터를 표시합니다.
+  //       }
+  //       if (snapshot.hasError) {
+  //         return Center(child: Text("데이터 오류")); // 오류가 발생한 경우 오류 메시지를 표시합니다.
+  //       }
+  //       if (snapshot.hasData) {
+  //         return _makeDataList(snapshot.data ??
+  //             []); // 데이터가 있는 경우 _makeDataList 메서드를 호출하여 리스트를 생성합니다.
+  //       }
+  //       return Center(
+  //           child: Text("해당 지역에 데이터가 없습니다.")); // 데이터가 없는 경우 해당 메시지를 표시합니다.
+  //     },
+  //   );
+  // }
+
+  Widget _bodyWidget() {
+    return FutureBuilder(
+      future: _loadContents(), // 비동기로 컨텐츠를 로드합니다.
+      builder: (BuildContext context,
+          AsyncSnapshot<List<Map<String, String>>?> snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return Center(
+              child: CircularProgressIndicator()); // 로딩 중인 경우 로딩 인디케이터를 표시합니다.
+        }
+
+        if (snapshot.hasData && snapshot.data!.isEmpty) {
+          return Center(
+              child: Text("해당 지역에 데이터가 없습니다.")); // 데이터가 없는 경우 해당 메시지를 표시합니다.
+        }
+        if (snapshot.hasData) {
+          return _makeDataList(
+              snapshot.data!); // 데이터가 있는 경우 _makeDataList 메서드를 호출하여 리스트를 생성합니다.
+        }
+        // if (snapshot.hasError) {
+        //   return Center(child: Text("데이터 오류")); // 오류가 발생한 경우 오류 메시지를 표시합니다.
+        // }
+        return Center(
+            child: Text("해당 지역에 데이터가 없습니다.")); // 데이터가 없는 경우 해당 메시지를 표시합니다.
       },
     );
   }
@@ -297,8 +260,8 @@ class _ResailHomeState extends State<ResailHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appbarWidget(),
-      body: _bodyWidget(),
+      appBar: _appbarWidget(), // 앱바 위젯을 표시합니다.
+      body: _bodyWidget(), // 바디 위젯을 표시합니다.
     );
   }
 }
