@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_resailmarketpractice/page/detail.dart';
 import 'package:flutter_resailmarketpractice/repository/contents_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -128,73 +129,85 @@ class _ResailHomeState extends State<ResailHome> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       itemCount: datas.length, // 데이터 리스트의 길이로 itemCount를 설정합니다.
       itemBuilder: (BuildContext context, int index) {
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: Image.asset(
-                  datas[index]["image"] ??
-                      "", // 이미지 경로입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
-                  width: 100,
-                  height: 100,
-                ),
-              ),
-              SizedBox(width: 20),
-              Expanded(
-                child: Container(
-                  height: 100,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        datas[index]["title"] ??
-                            "", // 제목입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        datas[index]["location"] ??
-                            "", // 위치입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black26.withOpacity(0.4),
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        calcStringToWon(datas[index]["price"] ??
-                            "0"), // 가격입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            SvgPicture.asset(
-                              "assets/svg/heart_off.svg", // 좋아요 아이콘 SVG 이미지입니다.
-                              width: 14,
-                              height: 14,
-                            ),
-                            SizedBox(width: 5),
-                            Text(datas[index]["likes"] ??
-                                "0"), // 좋아요 수입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
-                          ],
-                        ),
-                      ),
-                    ],
+        return GestureDetector(
+          onTap: () {
+            // 클릭 시 상세화면으로 이동하는 코드를 작성합니다.
+
+            //클릭했을때 detail로 이동하면서 데이터를 넘겨줘야함.
+            //네비게이터로 이동하면서 데이터를 넘겨준다.
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return DetailContentView(data: datas[index]);
+            }));
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: Image.asset(
+                    datas[index]["image"] ??
+                        "", // 이미지 경로입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                    width: 100,
+                    height: 100,
                   ),
                 ),
-              ),
-            ],
+                SizedBox(width: 20),
+                Expanded(
+                  child: Container(
+                    height: 100,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          datas[index]["title"] ??
+                              "", // 제목입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          datas[index]["location"] ??
+                              "", // 위치입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black26.withOpacity(0.4),
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          calcStringToWon(datas[index]["price"] ??
+                              "0"), // 가격입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/svg/heart_off.svg", // 좋아요 아이콘 SVG 이미지입니다.
+                                width: 14,
+                                height: 14,
+                              ),
+                              SizedBox(width: 5),
+                              Text(datas[index]["likes"] ??
+                                  "0"), // 좋아요 수입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
