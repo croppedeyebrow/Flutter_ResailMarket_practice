@@ -132,7 +132,6 @@ class _ResailHomeState extends State<ResailHome> {
         return GestureDetector(
           onTap: () {
             // 클릭 시 상세화면으로 이동하는 코드를 작성합니다.
-
             //클릭했을때 detail로 이동하면서 데이터를 넘겨줘야함.
             //네비게이터로 이동하면서 데이터를 넘겨준다.
             Navigator.push(context,
@@ -145,12 +144,21 @@ class _ResailHomeState extends State<ResailHome> {
             child: Row(
               children: [
                 ClipRRect(
+                  // 모든 모서리가 10 픽셀의 반경을 가진 원형으로 둥글게 잘라낸다.
                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  child: Image.asset(
-                    datas[index]["image"] ??
-                        "", // 이미지 경로입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
-                    width: 100,
-                    height: 100,
+                  child: Hero(
+                    // Hero 애니메이션의 태그로, datas[index]["cid"]를 사용한다.
+                    // 만약 datas[index]["cid"]가 null이면, 빈 문자열("")을 기본값으로 사용한다.
+                    tag: datas[index]["cid"] ?? "",
+                    child: Image.asset(
+                      // 이미지의 경로는 datas[index]["image"]를 사용한다.
+                      // 만약 datas[index]["image"]가 null이면, 빈 문자열("")을 기본값으로 사용한다.
+                      datas[index]["image"] ?? "",
+                      // 이미지의 너비를 100 픽셀로 설정한다.
+                      width: 100,
+                      // 이미지의 높이를 100 픽셀로 설정한다.
+                      height: 100,
+                    ),
                   ),
                 ),
                 SizedBox(width: 20),
