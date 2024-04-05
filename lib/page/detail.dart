@@ -2,6 +2,7 @@
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_resailmarketpractice/components/manor_temperature_widget.dart';
 
 class DetailContentView extends StatefulWidget {
   final Map<String, String> data;
@@ -125,22 +126,81 @@ class _DetailContentViewState extends State<DetailContentView> {
   }
 
   Widget _sellerSimpleInfo() {
-    return Row(
-      children: [
-        // ClipRRect(
-        //   borderRadius: BorderRadius.circular(50),
-        //   child: Container(
-        //     width: 50,
-        //     height: 50,
-        //     child: Image.asset("assets/images/user.png"),
-        //   ),
-        // ),
+    return Padding(
+      padding: const EdgeInsets.all(14.0),
+      child: Row(
+        children: [
+          // ClipRRect(
+          //   borderRadius: BorderRadius.circular(50),
+          //   child: Container(
+          //     width: 50,
+          //     height: 50,
+          //     child: Image.asset("assets/images/user.png"),
+          //   ),
+          // ),
 
-        CircleAvatar(
-          backgroundImage: Image.asset("assets/images/user.png").image,
-          radius: 20,
-        ),
-      ],
+          CircleAvatar(
+            backgroundImage: Image.asset("assets/images/user.png").image,
+            //backgoundImage는 이미지를 설정할 때 image라는 provider를 사용합니다.
+            radius: 20,
+          ),
+          SizedBox(
+            width: 14,
+          ),
+          // 정보를 표시.
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            //가로로 시작점을 잡아주는것.
+            children: [
+              Text("눈썹",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text("서울시 마포구", style: TextStyle(fontSize: 12)),
+            ],
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          //여기서부터는 판매자의 평점(매너온도)을 표시합니다.
+          Expanded(
+            child: ManorTemperature(
+              manorTemp: 38.5,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _line() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      color: Colors.grey.withOpacity(0.25),
+      height: 1,
+    );
+  }
+
+  Widget _contentDetail() {
+    return Container(
+      child: Column(
+        children: [
+          Text(widget.data["title"]!,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+          Text(
+            "작은카테고리/ 큰 카테고리 * 업로드시간",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 10,
+                color: Colors.grey.withOpacity(0.4)),
+          ),
+          Text(
+            "상품에 대한 정보를 입력해주세요 100자이상 1000자이내로 입력해주세요.",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 10,
+                color: Colors.grey.withOpacity(0.4)),
+          )
+        ],
+      ),
     );
   }
 
@@ -149,6 +209,11 @@ class _DetailContentViewState extends State<DetailContentView> {
       children: [
         _makeSliderImage(),
         _sellerSimpleInfo(),
+        _line(),
+        SizedBox(
+          height: 10,
+        ),
+        _contentDetail()
       ],
     );
   }
