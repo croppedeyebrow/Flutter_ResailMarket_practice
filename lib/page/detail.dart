@@ -181,10 +181,15 @@ class _DetailContentViewState extends State<DetailContentView> {
 
   Widget _contentDetail() {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(widget.data["title"]!,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+          SizedBox(
+            height: 8,
+          ),
           Text(
             "작은카테고리/ 큰 카테고리 * 업로드시간",
             style: TextStyle(
@@ -192,30 +197,139 @@ class _DetailContentViewState extends State<DetailContentView> {
                 fontSize: 10,
                 color: Colors.grey.withOpacity(0.4)),
           ),
+          SizedBox(
+            height: 15,
+          ),
           Text(
-            "상품에 대한 정보를 입력해주세요 100자이상 1000자이내로 입력해주세요.",
+            "상품에 대한 정보를 입력해주세요 100자이상 1000자이내로 입력해주세요. \n "
+            "허위사실을 작성하거나 위법에 해당되는 물건을 판매하는 행위는 \n 법적조치의 대상이 될 수 있습니다 \n "
+            "거래당사자의 실수로 발생하는 문제는 당근마켓에서 책임지지 않습니다 \n "
+            "입금 및 대면 거래시 거대 상대방의 정보를 잘 확인하세요",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                height: 2, //줄간격을 조정합니다.
+                fontSize: 12,
+                color: Colors.grey.withOpacity(0.8)),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Text(
+            "채팅 3 · 관심 17 · 조회 295",
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 10,
                 color: Colors.grey.withOpacity(0.4)),
-          )
+          ),
+          SizedBox(
+            height: 15,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _reportzone() {
+    return InkWell(
+      onTap: () {
+        print("신고하기 클릭");
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(
+              Icons.error_outline,
+              color: Colors.red,
+            ),
+            SizedBox(
+              width: 16,
+            ),
+            Text(
+              "불량 게시물 신고",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Spacer(),
+            Icon(Icons.keyboard_arrow_right),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _otherSellContent() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "판매자님의 다른 판매 상품",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            " 모두 보기",
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
   }
 
   Widget _bodyWidget() {
-    return Column(
-      children: [
-        _makeSliderImage(),
-        _sellerSimpleInfo(),
-        _line(),
-        SizedBox(
-          height: 10,
-        ),
-        _contentDetail()
-      ],
-    );
+    return CustomScrollView(
+        // CustomScrollView는 여러 슬라이버 위젯을 사용하여 스크롤 가능한 영역을 생성합니다.
+        slivers: [
+          SliverList(
+            // SliverList는 슬라이버 위젯 중 하나로, 일반적인 리스트와 유사하게 작동합니다.
+            delegate: SliverChildListDelegate(
+              [
+                _makeSliderImage(), // 이미지 슬라이더를 생성하는 메서드
+                _sellerSimpleInfo(), // 판매자 정보를 간략하게 보여주는 메서드
+                _line(), // 구분선을 생성하는 메서드
+                _contentDetail(), // 상품의 상세 정보를 보여주는 메서드
+                _line(), // 구분선을 생성하는 메서드
+                _reportzone(), // 신고하기 영역을 생성하는 메서드
+                _line(), // 구분선을 생성하는 메서드
+                _otherSellContent(), // 판매자의 다른 상품 정보를 보여주는 메서드
+              ],
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 15), //패딩을 만들어주고
+            sliver: SliverGrid(
+              delegate: SliverChildListDelegate(List.generate(20, (index) {
+                return Container(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      color: Colors.grey.withOpacity(0.3),
+                      height: 140,
+                      width: 200,
+                    ),
+                    Text(
+                      "상품명",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    Text(
+                      "가격",
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ));
+              }).toList()),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                //gridDelgate를 사용하여 그리드 레이아웃을 생성합니다.
+                //추후에 인스타그램에도 활용 가능.
+                crossAxisCount: 2, //3개의 열을 만들어줍니다.
+                crossAxisSpacing: 8, //열과 열 사이의 간격을 5로 설정합니다.
+                mainAxisSpacing: 8, //행과 행 사이의 간격을 5로 설정합니다.
+              ),
+            ),
+          ),
+        ]);
   }
 
   Widget _bottomBarWidget() {
