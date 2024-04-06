@@ -3,6 +3,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_resailmarketpractice/components/manor_temperature_widget.dart';
+import 'package:flutter_resailmarketpractice/utils/data_utils.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class DetailContentView extends StatefulWidget {
   final Map<String, String> data;
@@ -303,10 +306,13 @@ class _DetailContentViewState extends State<DetailContentView> {
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      color: Colors.grey.withOpacity(0.3),
-                      height: 140,
-                      width: 200,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        color: Colors.grey.withOpacity(0.3),
+                        height: 140,
+                        width: 200,
+                      ),
                     ),
                     Text(
                       "상품명",
@@ -334,10 +340,67 @@ class _DetailContentViewState extends State<DetailContentView> {
 
   Widget _bottomBarWidget() {
     return Container(
-      width: size.width,
-      height: 56,
-      color: Colors.red,
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        width: size.width,
+        height: 44,
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                print("관심상품 체크");
+              },
+              child: SvgPicture.asset(
+                "assets/svg/heart_off.svg",
+                width: 24,
+                height: 24,
+              ),
+            ),
+            Container(
+                margin: const EdgeInsets.only(left: 15, right: 15),
+                width: 1,
+                height: 36,
+                color: Colors.grey.withOpacity(0.2)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  DataUtils.calcStringToWon(widget.data["price"]!),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "판매자에게 가격을 제안하기",
+                  style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Expanded(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    child: Text(
+                      "채팅으로 거래하기",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    color: Color(0xfff08f4f),
+                    alignment: Alignment.center,
+                  ),
+                ),
+              ],
+            )),
+          ],
+        ));
   }
 
   @override

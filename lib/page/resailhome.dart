@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_resailmarketpractice/page/detail.dart';
 import 'package:flutter_resailmarketpractice/repository/contents_repository.dart';
+import 'package:flutter_resailmarketpractice/utils/data_utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
@@ -33,16 +34,6 @@ class _ResailHomeState extends State<ResailHome> {
   void initState() {
     super.initState();
     currentLocation = "합정동"; // 초기 선택된 지역을 "합정동"으로 설정합니다. 'late' 변수를 초기화합니다.
-  }
-
-  final oCcy = new NumberFormat("###,###", "ko_KR"); // 숫자 포맷터를 생성합니다.
-
-  // 가격을 원화 형식으로 변환하는 함수입니다.
-  String calcStringToWon(String priceString) {
-    if (priceString == "무료나눔") {
-      return priceString;
-    }
-    return "${oCcy.format(int.parse(priceString))}원";
   }
 
   // 앱바 위젯을 생성하는 함수입니다.
@@ -188,7 +179,7 @@ class _ResailHomeState extends State<ResailHome> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          calcStringToWon(datas[index]["price"] ??
+                          DataUtils.calcStringToWon(datas[index]["price"] ??
                               "0"), // 가격입니다. null safety를 고려하여 ?? 연산자로 기본값을 제공합니다.
                           style: TextStyle(
                             fontSize: 13,
