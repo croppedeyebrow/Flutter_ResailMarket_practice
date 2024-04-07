@@ -3,6 +3,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_resailmarketpractice/components/manor_temperature_widget.dart';
+import 'package:flutter_resailmarketpractice/repository/contents_repository.dart';
 import 'package:flutter_resailmarketpractice/utils/data_utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -16,9 +17,12 @@ class DetailContentView extends StatefulWidget {
 }
 
 class _DetailContentViewState extends State<DetailContentView>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
 //initState() 메서드는 context에 접근할 수 없기 때문에,
 // didChangeDependencies() 메서드를 사용하여 context에 접근합니다.
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  //scaffoldKey는 Scaffold 위젯의 상태를 제어하기 위한 키입니다.
   List<Map<String, String>> imgList = [];
   int _current = 0;
   Size size = Size.zero;
@@ -26,6 +30,9 @@ class _DetailContentViewState extends State<DetailContentView>
   ScrollController _controller = ScrollController();
   AnimationController? _animationController;
   late Animation<Color?> _colorTween;
+  bool isMyFavoriteContents = false;
+  final ContentsRepository contentsRepository =
+      ContentsRepository(); // ContentsRepository 인스턴스를 생성합니다. 데이터에 접근하기 위해서.
 
   // AnimationController는 애니메이션을 제어하는 클래스입니다.
   // Size 클래스는 너비와 높이를 나타내는 클래스입니다.
@@ -35,6 +42,8 @@ class _DetailContentViewState extends State<DetailContentView>
   @override
   void initState() {
     super.initState();
+    isMyFavoriteContents = false;
+    final contentsRepository = ContentsRepository();
     _animationController = AnimationController(vsync: this);
     _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
         .animate(_animationController!);
@@ -52,6 +61,7 @@ class _DetailContentViewState extends State<DetailContentView>
       //스코롤의 위치를 알려주는 offset
       //이제 이 값을 appbar의 backgroundcolor에 넣어주면 됨.
     });
+    _loadMyFavoriteContentState();
   }
 
   @override
@@ -67,6 +77,16 @@ class _DetailContentViewState extends State<DetailContentView>
       {"id": "3", "url": widget.data["image"]!},
       {"id": "4", "url": widget.data["image"]!},
     ];
+  }
+
+  //저장한 값을 불러오기.
+  _loadMyFavoriteContentState() async {
+    bool savecheck =
+        await contentsRepository.isMyFavoriteContents(widget.data["cid"]!);
+    setState(() {
+      isMyFavoriteContents = savecheck;
+    });
+    print(savecheck);
   }
 
   // 아이콘 위젯을 생성하고, 색상이 애니메이션에 따라 변하도록 하는 함수
@@ -401,12 +421,32 @@ class _DetailContentViewState extends State<DetailContentView>
           children: [
             GestureDetector(
               onTap: () {
+                contentsRepository.addMyFavoriteContents(widget.data);
                 print("관심상품 체크");
+                setState(() {
+                  //토글형식으로 작동하도록 설정.
+                  //이 때 로컬스토리지에 접근하도록 설정합니다.
+                  //true면 false로, false면 true로 바꿔줍니다.
+                  isMyFavoriteContents = !isMyFavoriteContents;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    duration: Duration(milliseconds: 2000),
+                    content: Text(
+                      isMyFavoriteContents == true
+                          ? "내 관심 상품 목록에 추가되었습니다."
+                          : "내 관심 상품 목록에서 제거되었습니다.",
+                    ),
+                  ),
+                );
               },
               child: SvgPicture.asset(
-                "assets/svg/heart_off.svg",
+                isMyFavoriteContents == true
+                    ? "assets/svg/heart_on.svg"
+                    : "assets/svg/heart_off.svg",
                 width: 24,
                 height: 24,
+                color: Color(0xfff08f4f),
               ),
             ),
             Container(
@@ -460,6 +500,7 @@ class _DetailContentViewState extends State<DetailContentView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       extendBodyBehindAppBar: true,
       // bpdy영역이 appbar영역까지 확장되도록 함.
       appBar: _appbarWidget(), // 앱바 위젯을 표시합니다.

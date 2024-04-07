@@ -1,4 +1,10 @@
-class ContentsRepository {
+import 'dart:convert';
+
+import 'package:flutter_resailmarketpractice/repository/local_storage_repository.dart';
+
+class ContentsRepository extends LocalStorageRepositoy {
+  final String MY_FAVORITE_STORE_KEY = "MY_FAVORITE_STORE_KEY"; //로컬스토리지에 저장할 키값
+
   // 'datas'라는 이름의 Map 객체를 생성합니다. 이 Map의 키는 문자열이고, 값은 동적 타입입니다.
   Map<String, dynamic> datas = {
     // "합정동"이라는 키에 대한 값으로 빈 리스트를 할당합니다.
@@ -258,5 +264,21 @@ class ContentsRepository {
     //Api통신 location값을 보내주면서  async await로 데이터를 지연시킨다.
     await Future.delayed(Duration(milliseconds: 1000));
     return datas[location];
+  }
+
+  addMyFavoriteContents(Map<String, String> contents) {
+    //로컬스토리지에 저장하는 함수
+    this.storedValue(MY_FAVORITE_STORE_KEY, jsonEncode(contents));
+  }
+
+  isMyFavoriteContents(String cid) async {
+    String jsonString = await this.getStoredValue(MY_FAVORITE_STORE_KEY);
+    if (jsonString != null) {
+      Map<String, dynamic> json = jsonDecode(jsonString);
+      return cid == json["cid"];
+      print(json);
+    } else {
+      return null;
+    }
   }
 }
