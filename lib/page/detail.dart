@@ -15,15 +15,45 @@ class DetailContentView extends StatefulWidget {
   _DetailContentViewState createState() => _DetailContentViewState();
 }
 
-class _DetailContentViewState extends State<DetailContentView> {
+class _DetailContentViewState extends State<DetailContentView>
+    with SingleTickerProviderStateMixin {
 //initState() 메서드는 context에 접근할 수 없기 때문에,
 // didChangeDependencies() 메서드를 사용하여 context에 접근합니다.
   List<Map<String, String>> imgList = [];
   int _current = 0;
   Size size = Size.zero;
+  double scrollpositionToAlpha = 0;
+  ScrollController _controller = ScrollController();
+  AnimationController? _animationController;
+  late Animation<Color?> _colorTween;
+
+  // AnimationController는 애니메이션을 제어하는 클래스입니다.
   // Size 클래스는 너비와 높이를 나타내는 클래스입니다.
   // Size 클래스는 두 개의 속성을 가지고 있습니다.
   // .zero는 너비와 높이가 0인 Size 객체를 생성합니다.
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this);
+    _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
+        .animate(_animationController!);
+    _controller.addListener(() {
+      // 스크롤 위치에 따라 앱바의 색상을 변경합니다.
+      print("스크롤 위치: ${_controller.offset}");
+      setState(() {
+        if (_controller.offset > 255) {
+          scrollpositionToAlpha = 255;
+        } else {
+          scrollpositionToAlpha = _controller.offset;
+        }
+        _animationController!.value = scrollpositionToAlpha / 255;
+      });
+      //스코롤의 위치를 알려주는 offset
+      //이제 이 값을 appbar의 backgroundcolor에 넣어주면 됨.
+    });
+  }
+
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
@@ -39,31 +69,53 @@ class _DetailContentViewState extends State<DetailContentView> {
     ];
   }
 
+  // 아이콘 위젯을 생성하고, 색상이 애니메이션에 따라 변하도록 하는 함수
+  Widget _makeIcon(IconData icon) {
+    return AnimatedBuilder(
+        animation: _colorTween, // 색상 변화 애니메이션
+        builder: (context, child) =>
+            Icon(icon, color: _colorTween.value) // 색상이 변하는 아이콘 위젯
+        );
+  }
+
+// 텍스트 위젯을 생성하고, 색상이 애니메이션에 따라 변하도록 하는 함수
+  Widget _makeText(String data, {TextStyle? style}) {
+    return AnimatedBuilder(
+      animation: _colorTween, // 색상 변화 애니메이션
+      builder: (context, child) => Text(
+        data,
+        style: style?.copyWith(color: _colorTween.value), // 색상이 변하는 텍스트 스타일
+      ),
+    );
+  }
+
+// 앱바 위젯을 생성하는 함수
   PreferredSizeWidget _appbarWidget() {
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
+      // 배경색은 스크롤 위치에 따라 투명도가 변함
+      backgroundColor: Colors.white.withAlpha(scrollpositionToAlpha.toInt()),
+      elevation: 0, // 앱바의 그림자 없음
       leading: IconButton(
-        onPressed: () {
-          Navigator.pop(context); // 페이지 히스토리를 제거하면서 뒤로가기 기능
-        },
-        icon: Icon(Icons.arrow_back, color: Colors.white),
-      ),
-      title: Text(
+          onPressed: () {
+            Navigator.pop(context); // 뒤로가기 버튼 클릭 시, 이전 페이지로 이동
+          },
+          icon: _makeIcon(Icons.arrow_back) // 뒤로가기 아이콘
+          ),
+      title: _makeText(
         "상세화면",
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white), // 제목 텍스트
       ),
       actions: [
         IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.share),
-          color: Colors.white, // 검색 아이콘 버튼입니다.
+          onPressed: () {}, // 아직 기능이 정의되지 않음
+          icon: _makeIcon(Icons.share), // 공유 아이콘
+          color: Colors.white,
         ),
         IconButton(
           onPressed: () {
-            print("menu click");
+            print("menu click"); // 메뉴 버튼 클릭 시, 콘솔에 메시지 출력
           },
-          icon: Icon(Icons.more_vert),
+          icon: _makeIcon(Icons.more_vert), // 메뉴 아이콘
           color: Colors.white,
         ),
       ],
@@ -282,6 +334,8 @@ class _DetailContentViewState extends State<DetailContentView> {
   Widget _bodyWidget() {
     return CustomScrollView(
         // CustomScrollView는 여러 슬라이버 위젯을 사용하여 스크롤 가능한 영역을 생성합니다.
+        //이곳에 컨트롤러를 추가해서 스크롤 위치에 따른 앱바의 색상값을 조절해줍니다.
+        controller: _controller,
         slivers: [
           SliverList(
             // SliverList는 슬라이버 위젯 중 하나로, 일반적인 리스트와 유사하게 작동합니다.
