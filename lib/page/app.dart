@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart'; // Flutter에서 제공하는 Material 디자인 관련 위젯을 사용하기 위해 필요한 패키지입니다.
+
 import 'package:flutter_svg/flutter_svg.dart'; // SVG 이미지를 사용하기 위해 필요한 패키지입니다.
 import 'package:intl/intl.dart'; // 숫자를 통화 형식으로 변환하기 위해 필요한 패키지입니다.
 

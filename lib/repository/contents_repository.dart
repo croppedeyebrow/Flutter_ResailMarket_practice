@@ -266,19 +266,60 @@ class ContentsRepository extends LocalStorageRepositoy {
     return datas[location];
   }
 
-  addMyFavoriteContents(Map<String, String> contents) {
+  //List<dynamics>를 반환하는 함수를 분리하기.
+  Future<List> loadFavoriteContetns() async {
+    String jsonString = await this.getStoredValue(MY_FAVORITE_STORE_KEY);
+    if (jsonString != null) {
+      List<dynamic> json = jsonDecode(jsonString);
+      return json;
+    } else {
+      return [];
+    }
+  }
+
+  addMyFavoriteContents(Map<String, String> contents) async {
+    List<dynamic> favoriteContentList = await loadFavoriteContetns();
+    if (favoriteContentList == null || !(favoriteContentList is List)) {
+      favoriteContentList = [contents];
+    } else {
+      favoriteContentList.add(contents);
+    }
+    favoriteContentList.add(contents);
+    //리스트를 만들어서 저장을 해줍니다.
     //로컬스토리지에 저장하는 함수
-    this.storedValue(MY_FAVORITE_STORE_KEY, jsonEncode(contents));
+
+    updateFavoriteContetn(favoriteContentList);
+  }
+
+  //로컬스토리지에 저장하는 함수를 공통으로 빼기.
+  void updateFavoriteContetn(List favoriteContentList) async {
+    await this
+        .storedValue(MY_FAVORITE_STORE_KEY, jsonEncode(favoriteContentList));
+  }
+
+  removeMyFavoriteContents(String cid) async {
+    List<dynamic> favoriteContentList = await loadFavoriteContetns();
+    if (favoriteContentList != null && favoriteContentList is List) {
+      favoriteContentList.removeWhere((data) => data['cid'] == cid);
+    }
+
+    updateFavoriteContetn(favoriteContentList);
   }
 
   isMyFavoriteContents(String cid) async {
-    String jsonString = await this.getStoredValue(MY_FAVORITE_STORE_KEY);
-    if (jsonString != null) {
-      Map<String, dynamic> json = jsonDecode(jsonString);
-      return cid == json["cid"];
-      print(json);
+    bool isMyFavoriteContents = false;
+    List json = await loadFavoriteContetns();
+
+    if (json == null || !(json is List)) {
+      return false;
     } else {
-      return null;
+      for (dynamic data in json) {
+        if (data['cid'] == cid) {
+          isMyFavoriteContents = true;
+          break;
+        }
+      }
     }
+    return isMyFavoriteContents;
   }
 }

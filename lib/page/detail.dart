@@ -420,9 +420,15 @@ class _DetailContentViewState extends State<DetailContentView>
         child: Row(
           children: [
             GestureDetector(
-              onTap: () {
-                contentsRepository.addMyFavoriteContents(widget.data);
-                print("관심상품 체크");
+              onTap: () async {
+                if (isMyFavoriteContents) {
+                  //제거
+                  await contentsRepository
+                      .removeMyFavoriteContents(widget.data["cid"]!);
+                } else {
+                  await contentsRepository.addMyFavoriteContents(widget.data);
+                  print("관심상품 체크");
+                }
                 setState(() {
                   //토글형식으로 작동하도록 설정.
                   //이 때 로컬스토리지에 접근하도록 설정합니다.
