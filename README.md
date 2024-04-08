@@ -1,16 +1,8 @@
-# flutter_resailmarketpractice
+<h1>Flutter 당근마켓 홈page 클론 코딩 연습</h1>
 
-A new Flutter project.
+<h3> Dart 수업과 병행하면서, 작동법 확인하는 용</h3>
+<h3> 웹과 다른 방식으로 구현하는 느낌을 익힘<h3>
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<h4> 추가적인 클론 코딩 및 flutter 위젯과 dart언어 학습 이후</h4>
+<br>
+<h4> 플러터를 이용한 기획상품 제작하기 도전할 예정.</h4>
